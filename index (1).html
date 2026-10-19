@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GATE DA 2027 + Jarvis · Daily Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5fa;--sf:#fff;--tx:#151b2c;--mu:#5f6a84;--ln:#dde2ee;--g:#a86b00;--gb:#fff1d1;--a:#00756b;--ab:#d6f5f0;--ok:#16a05a}
+@media(prefers-color-scheme:dark){:root{--bg:#0b101b;--sf:#131a2a;--tx:#eaeef7;--mu:#93a0bb;--ln:#26314b;--g:#f4bb4f;--gb:#2b2210;--a:#3ddbc9;--ab:#0e2a2b;--ok:#44d98c}}
+*{box-sizing:border-box;margin:0}html,body{background:var(--bg);color:var(--tx);font:16px/1.5 Inter,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+h1,h2,h3,b{font-family:Sora,Inter,sans-serif}button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.wrap{max-width:860px;margin:auto;padding:18px 14px 90px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+h1{font-size:1.35rem}.sub{color:var(--mu);font-size:.9rem}
+.pill{background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:6px 14px;font-size:.88rem;font-weight:600}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--ln);padding:5px;border-radius:14px;margin-bottom:16px}
+nav button{border:0;background:none;padding:11px 6px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--mu)}
+nav button.on{background:var(--sf);color:var(--tx)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:18px;margin-bottom:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{justify-content:space-between}
+.btn{background:var(--tx);color:var(--bg);border:0;border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600}
+.btn.o{background:none;color:var(--tx);border:1px solid var(--ln)}
+h2{font-size:1.4rem;margin:2px 0 12px}
+.goal{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;margin-bottom:8px;background:var(--gb);border-left:5px solid var(--g)}
+.goal.ai{background:var(--ab);border-color:var(--a)}
+.goal small{min-width:62px;font-weight:600;color:var(--g);padding-top:2px}.goal.ai small{color:var(--a)}
+.goal b{font-weight:600;font-size:1.02rem}
+.bar{height:10px;background:var(--ln);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.slot{display:grid;grid-template-columns:54px 1fr 26px;gap:10px;align-items:center;padding:11px 4px;border-bottom:1px solid var(--ln);cursor:pointer}
+.slot:last-child{border:0}.slot .t{font:600 .85rem Sora,sans-serif;color:var(--mu)}
+.slot.gate .x{border-left:4px solid var(--g);padding-left:10px}.slot.ai .x{border-left:4px solid var(--a);padding-left:10px}
+.slot.life{opacity:.65}.slot.done .x{text-decoration:line-through;opacity:.5}
+.chk{width:24px;height:24px;border-radius:8px;border:2px solid var(--mu);display:grid;place-items:center;color:#fff;font-size:15px}
+.slot.life .chk{visibility:hidden}.done .chk{background:var(--ok);border-color:var(--ok)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+.chip{border:1px solid var(--ln);background:var(--sf);border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600;white-space:nowrap}
+.chip.on{background:var(--tx);color:var(--bg)}.chip.now{border-color:var(--a)}
+.day{cursor:pointer}.day:hover{border-color:var(--a)}.day p{margin-top:6px}
+.day .l{display:inline-block;width:62px;color:var(--g);font-weight:600;font-size:.85rem}.day .l.ai{color:var(--a)}
+textarea,input{width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:9px 11px;margin-top:8px}
+textarea{min-height:80px;resize:vertical}
+.timer{font:700 3.6rem Sora,sans-serif;text-align:center;margin:10px 0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><div class="wrap">
+<div class="top"><div><h1>GATE DA 2027 + Jarvis</h1><p class="sub">Classes 08:00 to 18:00 · study from 19:00 · 4-hour sleep</p></div><div class="row" id="stats"></div></div>
+<nav id="nav"></nav><main id="v"></main></div>
+<script>
+// Each week: [title, 5 weekdays "GATE topic 1|GATE topic 2|Jarvis task", "Saturday test|Saturday Jarvis sprint"]
+const W=[
+["Linear Algebra + Python basics",["Vectors, vector spaces, basis|Python: types, loops, functions, lists|Install Python, VS Code, Git; get an LLM API key","Matrices, rank, determinant|Python: dicts, sets, classes, file I/O|Terminal chatbot: ask one question, print the answer","Linear systems, LU decomposition|Arrays, strings, Big-O complexity|Add chat history so it remembers the conversation","Eigenvalues and eigenvectors|Stacks and queues|Give it a Jarvis personality with a system prompt","Projections, orthogonality, SVD|Linked lists and recursion|Save and reload chats from a JSON file"],"Linear Algebra, 60 Qs|Add commands to the chatbot and push it to GitHub"],
+["Probability and Statistics",["Counting, permutations, axioms of probability|Mean, median, mode, variance|Record microphone audio in Python","Conditional probability, Bayes theorem|Standard deviation, covariance, correlation|Speech-to-text with Whisper","Random variables, expectation, variance|Sampling and the Central Limit Theorem|Text-to-speech so Jarvis talks back","Binomial, Poisson, geometric distributions|Hypothesis testing, confidence intervals|Push-to-talk voice conversation loop","Uniform, normal, exponential distributions|Joint and marginal distributions|Add a wake word: Hey Jarvis"],"Probability and Statistics, 60 Qs|Full voice conversation with error handling"],
+["Calculus, Optimization + Probability PYQs",["Limits and continuity|PYQs: Bayes and counting|Learn function calling: build a weather tool","Differentiation, mean value theorem|PYQs: distributions|Tool: web search","Taylor series, maxima and minima|PYQs: statistics|Tool: read and write local files","Single-variable optimization|PYQs: Linear Algebra|Tool: open apps and run safe system commands","Partial derivatives and gradients|PYQs: calculus|Tool: read Google Calendar events"],"Calculus and Probability, 60 Qs|Let Jarvis choose tools itself; test 20 commands"],
+["DSA and Programming + Memory",["Trees: binary trees, BST, traversals|PYQs: Python output questions|Learn embeddings; embed one note","Heaps and priority queues|PYQs: recursion and complexity|Install a vector database (Chroma)","Hashing and hash tables|Sorting: merge sort, quick sort|Index your whole notes folder","Graphs: BFS and DFS|Divide and conquer, sorting PYQs|Retrieval: Jarvis answers from your notes","Shortest paths: Dijkstra, Bellman-Ford|Dynamic programming basics|Jarvis saves facts you tell it"],"DSA and Programming, 60 Qs|Add memory recall to the voice loop"],
+["DBMS + Supervised ML + Agents",["ER model, relational model, relational algebra|Regression: linear, ridge, lasso|Agent loop: plan, act, observe","SQL: joins, group by, nested queries|Logistic regression and KNN|Multi-step tasks using several tools","Normalization and functional dependencies|Naive Bayes and LDA|Gmail: read and summarize emails","Transactions, concurrency, indexing|SVM and decision trees|Gmail: draft replies for your approval","Data warehousing, OLAP, star schema|Bias-variance, cross-validation|Daily briefing: mail plus calendar"],"DBMS and Supervised ML, 60 Qs|Morning briefing delivered by voice"],
+["Unsupervised ML, Neural Nets, AI + Vision",["Clustering: k-means, hierarchical|Perceptron, MLP, backpropagation|Capture a webcam frame","PCA and dimensionality reduction|Neural network PYQs|Send an image to a vision model and describe it","AI: uninformed search (BFS, DFS)|Informed search: A* and heuristics|Object recognition: what is this?","Propositional and predicate logic|Logical inference and resolution|Read on-screen text (OCR) on request","Bayesian networks, conditional independence|Variable elimination and inference|Combine vision with voice commands"],"ML and AI, 60 Qs|Scene-awareness mode: describe my surroundings"],
+["Revision 1 + Dashboard",["Revise Linear Algebra and formulas|PYQs 2022 to 2026: Linear Algebra|Create a Next.js project and dashboard layout","Revise Probability|PYQs 2022 to 2026: Probability|Live chat panel to talk to Jarvis","Revise Statistics and Calculus|PYQs: statistics and calculus|Show tool-use logs on the dashboard","Revise DSA and Programming|PYQs: DSA|Memory viewer: see what Jarvis remembers","Revise DBMS|PYQs: DBMS and SQL|System controls: volume, apps, timers"],"Full mock test 1 (mixed, 3 hrs)|Connect the dashboard to the Jarvis backend"],
+["Revision 2 + Safety and Deploy",["Revise supervised ML|PYQs: supervised ML|Permission prompt before risky actions","Revise unsupervised ML and neural nets|PYQs: unsupervised ML, neural nets|Action log and an emergency kill switch","Revise AI|PYQs: AI search and logic|Rate limits and error handling","Fix weak topic 1|Fix weak topic 2|Deploy the backend (Render or Railway)","Fix weak topic 3|General Aptitude: verbal and numerical|Deploy the dashboard on Vercel"],"Full mock test 2 (3 hrs)|Test everything end to end"],
+["Final Sprint",["Formula sheets: Linear Algebra, Probability|Formula sheets: ML, DBMS, DSA|Write the README and architecture diagram","PYQs: two mixed sets|Aptitude: 60 questions|Record a demo video","Drill weak areas|Review your error log|Push to GitHub and freeze features","Light revision: formulas only|Aptitude and sleep catch-up|Rest: no Jarvis work","Analyse mock 3|Exam strategy: time per section|No new work"],"Full mock test 3 (3 hrs)|Optional small polish only"]];
+const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0');
+let S={start:'2026-10-19',done:{},mocks:[],notes:{}};
+try{Object.assign(S,JSON.parse(localStorage.getItem('gj2')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('gj2',JSON.stringify(S))}catch(e){}};
+const D=s=>new Date(s+'T00:00:00'),iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const add=(s,n)=>{const d=D(s);d.setDate(d.getDate()+n);return iso(d)};
+const idx=s=>Math.round((D(s)-D(S.start))/864e5),cl=i=>Math.max(0,Math.min(62,i));
+const today=iso(new Date());let sel=add(S.start,cl(idx(today))),tab='today',sw=Math.floor(cl(idx(today))/7);
+const fmt=d=>D(d).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+function plan(d){const i=cl(idx(d)),w=W[Math.floor(i/7)],k=i%7;
+ if(k<5){const[a,b,j]=w[1][k].split('|');return{k,w,a,b,j}}
+ if(k==5){const[a,j]=w[2].split('|');return{k,w,a,b:'Fix every error from the test, rewrite weak notes',j}}
+ return{k,w,a:'Full mock test (3 hrs) in GATE conditions',b:'Mock analysis: log every wrong answer and why',j:'Demo this week’s Jarvis build and push to GitHub'}}
+function blocks(d){const p=plan(d),k=p.k,wake=["06:30","Wake, stretch, light exercise, breakfast","life"];
+ if(k==6)return[wake,["08:00",p.a,"gate"],["11:30","Break and lunch","life"],["12:30",p.b,"gate"],["16:00","Jarvis: "+p.j,"ai"],["19:00","Dinner and free time","life"],["21:00","Plan next week + 10 flashcards","gate"],["23:00","Recovery sleep (7.5 hours)","life"]];
+ if(k==5)return[wake,["08:00",p.a,"gate"],["11:00",p.b,"gate"],["13:30","Lunch and 20 min nap","life"],["14:30","Jarvis sprint: "+p.j,"ai"],["19:00","Dinner and break","life"],["19:45","Revise the week’s weak topics","gate"],["22:15","Jarvis reading: docs and lectures","ai"],["23:30","30 aptitude questions + formula sheet","gate"],["02:30","Sleep (4 hours)","life"]];
+ return[["06:30","Wake, freshen up, 10 min exercise","life"],["06:45","Revise yesterday’s notes + formula sheet","gate"],["07:30","Breakfast and commute","life"],["08:00","Classes until 18:00. In gaps: 10 flashcards or 5 PYQs","life"],["18:00","Commute, dinner and rest","life"],["19:00","Learn: "+p.a,"gate"],["21:00","Practice 25 problems: "+p.a,"gate"],["22:30","Short break and snack","life"],["22:45","Jarvis build: "+p.j,"ai"],["00:45","Study: "+p.b,"gate"],["01:45","Log the day, plan tomorrow","gate"],["02:30","Sleep (4 hours)","life"]]}
+const isDone=(d,k)=>!!S.done[d+'|'+k];
+function pct(d){const b=blocks(d);let n=0,t=0;b.forEach((x,k)=>{if(x[2]!='life'){t++;if(isDone(d,k))n++}});return t?n/t:0}
+function total(){let s=0;for(let i=0;i<63;i++)s+=pct(add(S.start,i));return Math.round(s/63*100)}
+function streak(){let n=0,i=cl(idx(today));if(pct(add(S.start,i))<.6)i--;for(;i>=0&&pct(add(S.start,i))>=.6;i--)n++;return n}
+function head(){const i=idx(today);$('#stats').innerHTML=`<span class="pill">${i<0?'Starts '+fmt(S.start):i>62?'Plan complete':'Day '+(i+1)+' of 63'}</span><span class="pill">${total()}% done</span><span class="pill">${streak()}-day streak</span>`}
+const tabs=[["today","Today"],["week","Weekly plan"],["tools","Mocks and tools"]];
+function draw(){head();$('#nav').innerHTML=tabs.map(t=>`<button class="${t[0]==tab?'on':''}" data-t="${t[0]}">${t[1]}</button>`).join('');
+ $('#v').innerHTML={today:vToday,week:vWeek,tools:vTools}[tab]();
+ document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;draw()});bind()}
+const goals=p=>`<div class="goal"><small>GATE 1</small><b>${p.a}</b></div><div class="goal"><small>GATE 2</small><b>${p.b}</b></div><div class="goal ai"><small>Jarvis</small><b>${p.j}</b></div>`;
+function vToday(){const p=plan(sel),bl=blocks(sel),pc=Math.round(pct(sel)*100);
+ return`<div class="card"><div class="row sp"><p class="sub">${fmt(sel)} · Week ${Math.floor(cl(idx(sel))/7)+1}: ${p.w[0]}</p><div class="row"><button class="btn o" id="pv" aria-label="Previous day">‹</button><button class="btn o" id="tn">Today</button><button class="btn o" id="nx" aria-label="Next day">›</button></div></div>
+ <h2>What to study today</h2>${goals(p)}<div class="row sp" style="margin-top:12px"><span class="sub">Study blocks done</span><b>${pc}%</b></div><div class="bar"><i style="width:${pc}%"></i></div></div>
+ <div class="card"><h2>Today’s timetable</h2><p class="sub" style="margin-bottom:6px">Tap a study block to tick it off.</p>${bl.map((b,k)=>`<div class="slot ${b[2]} ${isDone(sel,k)?'done':''}" data-k="${k}" role="checkbox" tabindex="0" aria-checked="${isDone(sel,k)}"><span class="t">${b[0]}</span><span class="x">${b[1]}</span><span class="chk">${isDone(sel,k)?'✓':''}</span></div>`).join('')}</div>
+ <div class="card"><b>Notes for today</b><textarea id="nt" placeholder="What clicked? What needs another pass?">${S.notes[sel]||''}</textarea></div>`}
+function vWeek(){const st=add(S.start,sw*7),w=W[sw],cw=Math.floor(cl(idx(today))/7);
+ return`<div class="chips">${W.map((x,n)=>`<button class="chip ${n==sw?'on':''} ${n==cw?'now':''}" data-w="${n}">Week ${n+1}</button>`).join('')}</div>
+ <div class="card"><h2>Week ${sw+1}: ${w[0]}</h2><p class="sub">${fmt(st)} to ${fmt(add(st,6))}. Tap a day to open it.</p></div>
+ ${[0,1,2,3,4,5,6].map(n=>{const d=add(st,n),p=plan(d),pc=Math.round(pct(d)*100);
+ return`<div class="card day" data-d="${d}"><div class="row sp"><b>${fmt(d)}${n==5?' · Test day':n==6?' · Mock day':''}</b><span class="sub">${pc}% done</span></div>
+ <p><span class="l">GATE 1</span>${p.a}</p><p><span class="l">GATE 2</span>${p.b}</p><p><span class="l ai">Jarvis</span>${p.j}</p></div>`}).join('')}`}
+let T={m:50,s:3000,r:null};const tf=()=>pad(Math.floor(T.s/60))+':'+pad(T.s%60);
+function vTools(){return`<div class="card"><h2>Focus timer</h2><div class="row"><button class="btn ${T.m==50?'':'o'}" data-m="50">Focus 50</button><button class="btn ${T.m==10?'':'o'}" data-m="10">Break 10</button></div><div class="timer" id="tm">${tf()}</div><div class="row" style="justify-content:center"><button class="btn" id="ts">${T.r?'Pause':'Start'}</button><button class="btn o" id="tr">Reset</button></div></div>
+ <div class="card"><h2>Mock tests</h2><div class="row"><input id="mn" placeholder="Test name" style="flex:2"><input id="ms" type="number" placeholder="Score /100" style="flex:1"></div><input id="mw" placeholder="Weakest topic"><button class="btn" id="ma" style="margin-top:10px">Save mock</button>
+ ${S.mocks.slice().reverse().map(e=>`<p style="padding:8px 0;border-top:1px solid var(--ln);margin-top:8px"><b>${e.s}</b> · ${e.n} · ${e.d} <span class="sub">${e.w?'weak: '+e.w:''}</span></p>`).join('')}<p class="sub" style="margin-top:8px">Aim for 65+ by your last mock.</p></div>
+ <div class="card"><h2>Start date</h2><p class="sub">Pick a Monday. The plan has 63 days.</p><input type="date" id="sd" value="${S.start}"><div class="row" style="margin-top:10px"><button class="btn" id="ss">Save date</button><button class="btn o" id="rs">Erase progress</button></div></div>`}
+function tog(k){const x=sel+'|'+k;S.done[x]?delete S.done[x]:S.done[x]=1;save();draw()}
+function bind(){const q=(s,f)=>document.querySelectorAll(s).forEach(f),go=n=>{sel=add(sel,n);draw()};
+ q('.slot:not(.life)',e=>{e.onclick=()=>tog(+e.dataset.k);e.onkeydown=v=>{if(v.key==' '||v.key=='Enter'){v.preventDefault();tog(+e.dataset.k)}}});
+ $('#pv')&&($('#pv').onclick=()=>go(-1));$('#nx')&&($('#nx').onclick=()=>go(1));$('#tn')&&($('#tn').onclick=()=>{sel=add(S.start,cl(idx(today)));draw()});
+ $('#nt')&&($('#nt').oninput=e=>{S.notes[sel]=e.target.value;save()});
+ q('.chip',e=>e.onclick=()=>{sw=+e.dataset.w;draw()});q('.day',e=>e.onclick=()=>{sel=e.dataset.d;tab='today';draw()});
+ $('#ma')&&($('#ma').onclick=()=>{const s=parseFloat($('#ms').value);if(isNaN(s))return;S.mocks.push({d:fmt(today),n:$('#mn').value||'Mock',s,w:$('#mw').value});save();draw()});
+ q('[data-m]',e=>e.onclick=()=>{clearInterval(T.r);T.r=null;T.m=+e.dataset.m;T.s=T.m*60;draw()});
+ $('#ts')&&($('#ts').onclick=()=>{if(T.r){clearInterval(T.r);T.r=null}else T.r=setInterval(()=>{T.s--;const t=$('#tm');t&&(t.textContent=tf());document.title=tf()+' · GATE + Jarvis';if(T.s<=0){clearInterval(T.r);T.r=null;draw()}},1000);draw()});
+ $('#tr')&&($('#tr').onclick=()=>{clearInterval(T.r);T.r=null;T.s=T.m*60;draw()});
+ $('#ss')&&($('#ss').onclick=()=>{if($('#sd').value){S.start=$('#sd').value;save();sel=add(S.start,cl(idx(today)));sw=Math.floor(cl(idx(today))/7);draw()}});
+ $('#rs')&&($('#rs').onclick=()=>{if(confirm('Erase all progress, notes and mock scores?')){S.done={};S.mocks=[];S.notes={};save();draw()}})}
+draw();
+</script></body></html>
